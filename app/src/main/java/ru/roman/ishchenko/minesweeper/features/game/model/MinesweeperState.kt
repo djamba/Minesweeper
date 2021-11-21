@@ -12,18 +12,18 @@ internal sealed class MinesweeperState
 
 internal object StartGameState: MinesweeperState()
 
-internal class GameSate(
-    board: Array<Array<Cell>>,
-    mineFlagged: Int,
-    timeLeft: Int
+internal data class GameSate(
+    val board: Array<Array<Cell>>,
+    val mineFlagged: Int,
+    val timeLeft: Int
 ): MinesweeperState()
 
-internal class WinGameState(
-    minFound: Int,
-    timeLeft: Int
+internal data class WinGameState(
+    val minFound: Int,
+    val timeLeft: Int
 ): MinesweeperState()
 
-internal class LoseGameState(
-    minFound: Int,
-    timeLeft: Int
+internal data class LoseGameState(
+    val minFound: Int,
+    val timeLeft: Int
 ): MinesweeperState()
