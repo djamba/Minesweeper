@@ -1,2 +1,2 @@
 # Minesweeper
-UDF architecture with JetPack Compose
+UDF architecture in Android with JetPack Compose
