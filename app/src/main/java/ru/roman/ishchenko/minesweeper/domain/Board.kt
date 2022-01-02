@@ -6,7 +6,7 @@ package ru.roman.ishchenko.minesweeper.domain
  * Time: 22:27
  */
 
-class MinesweeperBoard(
+internal class Board(
     sizeX: Int,
     sizeY: Int
 ) {

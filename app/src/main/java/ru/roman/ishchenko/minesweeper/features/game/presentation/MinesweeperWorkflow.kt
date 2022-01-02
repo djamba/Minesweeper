@@ -1,5 +1,6 @@
 package ru.roman.ishchenko.minesweeper.features.game.presentation
 
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collect
 import ru.roman.ishchenko.minesweeper.features.base.BaseWorkflowViewModel
 import ru.roman.ishchenko.minesweeper.features.game.middleware.GameMiddleware
@@ -12,6 +13,7 @@ import ru.roman.ishchenko.minesweeper.features.game.model.MinesweeperEvent
 import ru.roman.ishchenko.minesweeper.features.game.model.MinesweeperState
 import ru.roman.ishchenko.minesweeper.features.game.model.NewGameAction
 import ru.roman.ishchenko.minesweeper.features.game.model.OpenCellAction
+import javax.inject.Inject
 
 /**
  * User: roman
@@ -19,7 +21,8 @@ import ru.roman.ishchenko.minesweeper.features.game.model.OpenCellAction
  * Time: 21:57
  */
 
-internal class MinesweeperWorkflow(
+@HiltViewModel
+internal class MinesweeperWorkflow @Inject constructor(
     minesweeperReducer: MinesweeperReducer,
     private val gameMiddleware: GameMiddleware,
     private val timerMiddleware: TimerMiddleware,
@@ -29,7 +32,8 @@ internal class MinesweeperWorkflow(
     override suspend fun handleAction(action: MinesweeperAction) {
         when (action) {
             is NewGameAction -> {
-                gameMiddleware.handleAction(action)
+                val newGameEvent = gameMiddleware.handleAction(action)
+                obtainEvent(newGameEvent)
                 timerMiddleware.handleAction(action).collect { event ->
                     obtainEvent(event)
                 }

@@ -8,6 +8,7 @@ import ru.roman.ishchenko.minesweeper.features.game.model.MinesweeperState
 import ru.roman.ishchenko.minesweeper.features.game.model.NewGameAction
 import ru.roman.ishchenko.minesweeper.features.game.model.NewGameEvent
 import java.lang.IllegalStateException
+import javax.inject.Inject
 
 /**
  * User: roman
@@ -15,7 +16,7 @@ import java.lang.IllegalStateException
  * Time: 22:25
  */
 
-internal class MinesweeperReducer: Reducer<MinesweeperState, MinesweeperEvent, MinesweeperAction> {
+internal class MinesweeperReducer @Inject constructor(): Reducer<MinesweeperState, MinesweeperEvent, MinesweeperAction> {
 
     override fun reduce(state: MinesweeperState, event: MinesweeperEvent): Pair<MinesweeperState?, MinesweeperAction?> =
         when (event) {
@@ -26,6 +27,8 @@ internal class MinesweeperReducer: Reducer<MinesweeperState, MinesweeperEvent, M
             is WinGameEvent -> reduce(state, event)
             is LoseGameEvent -> reduce(state, event)
             is TimerEvent -> reduce(state, event)
+            is SuccessSaveGameEvent -> reduce(state, event)
+            is ErrorSaveGameEvent -> reduce(state, event)
         }
 
     private fun reduce(): Pair<MinesweeperState?, MinesweeperAction?> =
@@ -45,7 +48,7 @@ internal class MinesweeperReducer: Reducer<MinesweeperState, MinesweeperEvent, M
 
     private fun reduce(state: MinesweeperState, event: ChaneBoardEvent): Pair<MinesweeperState?, MinesweeperAction?> =
         when (state) {
-            is GameSate -> state.copy(board = event.board) to SaveGameAction
+            is StartGameState -> GameSate(board = event.board, 1, 1) to SaveGameAction
             else -> throw IllegalStateException("Wrong state")
         }
 
@@ -64,6 +67,18 @@ internal class MinesweeperReducer: Reducer<MinesweeperState, MinesweeperEvent, M
     private fun reduce(state: MinesweeperState, event: TimerEvent): Pair<MinesweeperState?, MinesweeperAction?> =
         when (state) {
             is GameSate -> state.copy(timeLeft = event.timeLeft) to SaveGameAction
+            else -> throw IllegalStateException("Wrong state")
+        }
+
+    private fun reduce(state: MinesweeperState, event: SuccessSaveGameEvent): Pair<MinesweeperState?, MinesweeperAction?> =
+        when (state) {
+            is GameSate -> state to null
+            else -> throw IllegalStateException("Wrong state")
+        }
+
+    private fun reduce(state: MinesweeperState, event: ErrorSaveGameEvent): Pair<MinesweeperState?, MinesweeperAction?> =
+        when (state) {
+            is GameSate -> state to null
             else -> throw IllegalStateException("Wrong state")
         }
 }

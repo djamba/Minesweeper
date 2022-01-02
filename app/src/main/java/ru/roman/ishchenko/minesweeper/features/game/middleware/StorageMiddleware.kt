@@ -1,10 +1,12 @@
 package ru.roman.ishchenko.minesweeper.features.game.middleware
 
 import ru.roman.ishchenko.minesweeper.features.base.Middleware
+import ru.roman.ishchenko.minesweeper.features.game.model.*
 import ru.roman.ishchenko.minesweeper.features.game.model.LoadGameAction
 import ru.roman.ishchenko.minesweeper.features.game.model.MinesweeperAction
 import ru.roman.ishchenko.minesweeper.features.game.model.MinesweeperEvent
 import ru.roman.ishchenko.minesweeper.features.game.model.SaveGameAction
+import javax.inject.Inject
 
 /**
  * User: roman
@@ -12,13 +14,14 @@ import ru.roman.ishchenko.minesweeper.features.game.model.SaveGameAction
  * Time: 0:31
  */
 
-internal class StorageMiddleware: Middleware<MinesweeperEvent, MinesweeperAction> {
+internal class StorageMiddleware @Inject constructor(): Middleware<MinesweeperEvent, MinesweeperAction> {
 
     suspend fun handleAction(action: LoadGameAction): MinesweeperEvent {
         TODO("Not yet implemented")
     }
 
     suspend fun handleAction(action: SaveGameAction): MinesweeperEvent {
-        TODO("Not yet implemented")
+        // TODO: Save game state
+        return SuccessSaveGameEvent
     }
 }

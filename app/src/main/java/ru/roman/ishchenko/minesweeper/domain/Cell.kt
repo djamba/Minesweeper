@@ -6,7 +6,7 @@ package ru.roman.ishchenko.minesweeper.domain
  * Time: 22:27
  */
 
-class Cell {
+internal class Cell {
     val state: Int = 0 // OPEN, CLOSE, FLAG
     val hasMine: Boolean = false
     val nearbyMinesCount: Int = 0

@@ -10,6 +10,7 @@ import ru.roman.ishchenko.minesweeper.features.game.model.MinesweeperAction
 import ru.roman.ishchenko.minesweeper.features.game.model.MinesweeperEvent
 import ru.roman.ishchenko.minesweeper.features.game.model.NewGameAction
 import ru.roman.ishchenko.minesweeper.features.game.model.TimerEvent
+import javax.inject.Inject
 
 /**
  * User: roman
@@ -17,7 +18,7 @@ import ru.roman.ishchenko.minesweeper.features.game.model.TimerEvent
  * Time: 0:34
  */
 
-internal class TimerMiddleware: Middleware<MinesweeperEvent, MinesweeperAction> {
+internal class TimerMiddleware @Inject constructor(): Middleware<MinesweeperEvent, MinesweeperAction> {
 
     fun handleAction(action: NewGameAction): Flow<TimerEvent> = flow {
         var time = 0

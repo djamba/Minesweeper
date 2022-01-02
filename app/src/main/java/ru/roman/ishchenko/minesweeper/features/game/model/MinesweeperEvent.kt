@@ -23,3 +23,7 @@ internal class WinGameEvent(val minFound: Int, val timeLeft: Int): MinesweeperEv
 internal class LoseGameEvent(val minFound: Int, val timeLeft: Int): MinesweeperEvent()
 
 internal class TimerEvent(val timeLeft: Int): MinesweeperEvent()
+
+internal object SuccessSaveGameEvent: MinesweeperEvent()
+
+internal object ErrorSaveGameEvent: MinesweeperEvent()
