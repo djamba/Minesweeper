@@ -48,7 +48,8 @@ internal class MinesweeperReducer @Inject constructor(): Reducer<MinesweeperStat
 
     private fun reduce(state: MinesweeperState, event: ChaneBoardEvent): Pair<MinesweeperState?, MinesweeperAction?> =
         when (state) {
-            is StartGameState -> GameSate(board = event.board, 1, 1) to SaveGameAction
+            is StartGameState -> GameSate(board = event.board, 0, 0) to SaveGameAction
+            is GameSate -> GameSate(board = event.board, state.mineFlagged + event.mineFlagged, state.timeLeft) to SaveGameAction
             else -> throw IllegalStateException("Wrong state")
         }
 

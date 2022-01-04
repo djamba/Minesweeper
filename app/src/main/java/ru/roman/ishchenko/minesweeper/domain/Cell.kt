@@ -6,20 +6,26 @@ package ru.roman.ishchenko.minesweeper.domain
  * Time: 22:27
  */
 
+internal enum class CellState { OPEN, CLOSE, FLAG, BLAST }
+
 internal class Cell {
-    val state: Int = 0 // OPEN, CLOSE, FLAG
-    val hasMine: Boolean = false
-    val nearbyMinesCount: Int = 0
+    var state: CellState = CellState.CLOSE
+        private set
+    var hasMine: Boolean = false
+    var nearbyMinesCount: Int = 0
 
     fun open() {
-
+        when {
+            state == CellState.CLOSE && hasMine.not() -> {
+                state = CellState.OPEN
+            }
+            state == CellState.CLOSE && hasMine -> {
+                state = CellState.BLAST
+            }
+        }
     }
 
     fun flag() {
-
-    }
-
-    fun setNearbyMines(count: Int) {
-
+        state = CellState.FLAG
     }
 }

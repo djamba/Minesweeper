@@ -40,5 +40,7 @@ internal abstract class BaseWorkflowViewModel<S, E, A>(
         }
     }
 
-    protected abstract suspend fun handleAction(action: A)
+    open suspend fun handleAction(action: A) {
+
+    }
 }

@@ -1,5 +1,7 @@
 package ru.roman.ishchenko.minesweeper.domain
 
+import kotlin.random.Random
+
 /**
  * User: roman
  * Date: 19.11.2021
@@ -8,19 +10,25 @@ package ru.roman.ishchenko.minesweeper.domain
 
 internal class Board(
     sizeX: Int,
-    sizeY: Int
+    sizeY: Int,
+    mineCount: Int
 ) {
-    val bard = Array<Array<Cell>>(sizeX) { Array<Cell>(sizeY) { Cell() } }
+    val board = Array<Array<Cell>>(sizeX) { Array<Cell>(sizeY) { Cell() } }
 
-    fun newGame() {
-
+    init {
+        for (i in 0..mineCount) {
+            val x = Random.nextInt(1, sizeX - 1)
+            val y = Random.nextInt(1, sizeY - 1)
+            // TODO: check double set mine
+            board[x][y].hasMine = true
+        }
     }
 
-    fun openCell() {
-
+    fun openCell(x: Int, y: Int) {
+        board[x][y].open()
     }
 
-    fun flagCell() {
-
+    fun flagCell(x: Int, y: Int) {
+        board[x][y].flag()
     }
 }

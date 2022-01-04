@@ -38,10 +38,22 @@ internal class MinesweeperWorkflow @Inject constructor(
                     obtainEvent(event)
                 }
             }
-            is OpenCellAction -> gameMiddleware.handleAction(action)
-            is FlagCellAction -> gameMiddleware.handleAction(action)
-            is LoadGameAction -> storageMiddleware.handleAction(action)
-            is SaveGameAction -> storageMiddleware.handleAction(action)
+            is OpenCellAction -> {
+                val event = gameMiddleware.handleAction(action)
+                obtainEvent(event)
+            }
+            is FlagCellAction -> {
+                val event = gameMiddleware.handleAction(action)
+                obtainEvent(event)
+            }
+            is LoadGameAction -> {
+                val event = storageMiddleware.handleAction(action)
+                obtainEvent(event)
+            }
+            is SaveGameAction -> {
+                val event = storageMiddleware.handleAction(action)
+                obtainEvent(event)
+            }
         }
     }
 }

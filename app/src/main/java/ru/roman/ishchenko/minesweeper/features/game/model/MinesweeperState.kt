@@ -1,7 +1,5 @@
 package ru.roman.ishchenko.minesweeper.features.game.model
 
-import ru.roman.ishchenko.minesweeper.domain.Cell
-
 /**
  * User: roman
  * Date: 19.11.2021
@@ -13,7 +11,7 @@ internal sealed class MinesweeperState
 internal object StartGameState: MinesweeperState()
 
 internal data class GameSate(
-    val board: Array<Array<Cell>>,
+    val board: List<List<CellSate>>,
     val mineFlagged: Int,
     val timeLeft: Int
 ): MinesweeperState()

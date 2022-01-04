@@ -10,9 +10,9 @@ internal sealed class MinesweeperAction
 
 internal object NewGameAction: MinesweeperAction()
 
-internal class OpenCellAction(x: Int, y: Int): MinesweeperAction()
+internal class OpenCellAction(val x: Int, val y: Int): MinesweeperAction()
 
-internal class FlagCellAction(x: Int, y: Int): MinesweeperAction()
+internal class FlagCellAction(val x: Int, val y: Int): MinesweeperAction()
 
 internal object LoadGameAction: MinesweeperAction()
 

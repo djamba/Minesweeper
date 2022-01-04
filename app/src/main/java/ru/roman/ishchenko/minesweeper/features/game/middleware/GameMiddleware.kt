@@ -1,6 +1,8 @@
 package ru.roman.ishchenko.minesweeper.features.game.middleware
 
 import ru.roman.ishchenko.minesweeper.domain.Cell
+import ru.roman.ishchenko.minesweeper.domain.CellState
+import ru.roman.ishchenko.minesweeper.domain.MinesweeperGame
 import ru.roman.ishchenko.minesweeper.features.base.Middleware
 import ru.roman.ishchenko.minesweeper.features.game.model.*
 import ru.roman.ishchenko.minesweeper.features.game.model.FlagCellAction
@@ -16,18 +18,47 @@ import javax.inject.Inject
  * Time: 22:43
  */
 
-internal class GameMiddleware @Inject constructor(): Middleware<MinesweeperEvent, MinesweeperAction> {
+internal class GameMiddleware @Inject constructor(
+    private val minesweeperGame: MinesweeperGame
+): Middleware<MinesweeperEvent, MinesweeperAction> {
 
     suspend fun handleAction(action: NewGameAction): MinesweeperEvent {
-        val board = Array<Array<Cell>>(10) { Array<Cell>(10) { Cell() } }
-        return ChaneBoardEvent(board)
+        val board = minesweeperGame.newGame().board
+        val boardState = createBoardState(board)
+        return ChaneBoardEvent(boardState)
     }
 
     suspend fun handleAction(action: OpenCellAction): MinesweeperEvent {
-        TODO("Not yet implemented")
+        val board = minesweeperGame.openCell(action.x, action.y).board
+        val boardState = createBoardState(board)
+        return ChaneBoardEvent(boardState)
     }
 
     suspend fun handleAction(action: FlagCellAction): MinesweeperEvent {
-        TODO("Not yet implemented")
+        val board = minesweeperGame.flagCell(action.x, action.y).board
+        val boardState = createBoardState(board)
+        return ChaneBoardEvent(boardState, 1)
+    }
+
+    private fun createBoardState(board: Array<Array<Cell>>): List<List<CellSate>> {
+        val boardState = mutableListOf<MutableList<CellSate>>()
+        for (i in board.indices) {
+            boardState.add(mutableListOf())
+            for (j in board[i].indices) {
+                val cell = board[i][j]
+                val cellState = when {
+                    cell.state == CellState.OPEN && cell.hasMine -> CellSate.OpenMineBlast
+                    cell.state == CellState.OPEN && cell.hasMine.not() && cell.nearbyMinesCount == 0 -> CellSate.OpenFree
+                    cell.state == CellState.OPEN && cell.hasMine.not() && cell.nearbyMinesCount > 0 -> {
+                        CellSate.OpenNumber(cell.nearbyMinesCount)
+                    }
+                    cell.state == CellState.FLAG -> CellSate.Flag
+                    cell.state == CellState.BLAST -> CellSate.OpenMineBlast
+                    else -> CellSate.Close
+                }
+                boardState[i].add(cellState)
+            }
+        }
+        return boardState
     }
 }
