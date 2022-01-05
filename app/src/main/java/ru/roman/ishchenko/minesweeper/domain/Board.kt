@@ -34,10 +34,41 @@ internal class Board(
     }
 
     fun openCell(x: Int, y: Int) {
+        if (board[x][y].state != CellState.CLOSE) return
+
         board[x][y].open()
+        if (board[x][y].state != CellState.BLAST) {
+            openArea(x, y)
+        } else {
+            openBoard()
+        }
     }
 
     fun flagCell(x: Int, y: Int) {
         board[x][y].flag()
+    }
+
+    private fun openArea(x: Int, y: Int) {
+        if (x > 0 && board[x-1][y].hasMine) board[x][y].nearbyMinesCount++
+        if (y > 0 && board[x][y-1].hasMine) board[x][y].nearbyMinesCount++
+        if (x < board.size-1 && board[x+1][y].hasMine) board[x][y].nearbyMinesCount++
+        if (y < board[0].size-1 && board[x][y+1].hasMine) board[x][y].nearbyMinesCount++
+
+        if (x > 0 && y > 0 && board[x-1][y-1].hasMine) board[x][y].nearbyMinesCount++
+        if (x > 0 && y < board[0].size-1 && board[x-1][y+1].hasMine) board[x][y].nearbyMinesCount++
+        if (x < board.size-1 && y > 0 && board[x+1][y-1].hasMine) board[x][y].nearbyMinesCount++
+        if (x < board.size-1 && y < board[0].size-1 && board[x+1][y+1].hasMine) board[x][y].nearbyMinesCount++
+
+        board[x][y].open()
+        if (board[x][y].nearbyMinesCount > 0) return
+
+        if (x > 0 && board[x-1][y].state == CellState.CLOSE) openArea(x-1, y)
+        if (y > 0 && board[x][y-1].state == CellState.CLOSE) openArea(x, y-1)
+        if (x < board.size-1 && board[x+1][y].state == CellState.CLOSE) openArea(x+1, y)
+        if (y < board[0].size-1 && board[x][y+1].state == CellState.CLOSE) openArea(x, y+1)
+    }
+
+    private fun openBoard() {
+        // TODO: finish game
     }
 }
