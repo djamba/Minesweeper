@@ -10,6 +10,6 @@ internal sealed class MinesweeperSettings(val sizeX: Int, val sizeY: Int, val mi
 
 internal object EasySettings: MinesweeperSettings(10, 10, 3)
 
-internal object MediumSettings: MinesweeperSettings(10, 10, 3)
+internal object MediumSettings: MinesweeperSettings(10, 10, 5)
 
 internal object HardSettings: MinesweeperSettings(10, 10, 7)

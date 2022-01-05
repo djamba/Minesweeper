@@ -16,11 +16,20 @@ internal class Board(
     val board = Array<Array<Cell>>(sizeX) { Array<Cell>(sizeY) { Cell() } }
 
     init {
-        for (i in 0..mineCount) {
-            val x = Random.nextInt(1, sizeX - 1)
-            val y = Random.nextInt(1, sizeY - 1)
-            // TODO: check double set mine
-            board[x][y].hasMine = true
+        var mine = mineCount
+        loop@for (i in board.indices) {
+            for (j in board.indices) {
+                board[i][j].hasMine = true
+                val x = Random.nextInt(1, sizeX - 1)
+                val y = Random.nextInt(1, sizeY - 1)
+
+                val tmp = board[x][y]
+                board[x][y] = board[i][j]
+                board[i][j] = tmp
+
+                mine--
+                if (mine == 0) break@loop
+            }
         }
     }
 
