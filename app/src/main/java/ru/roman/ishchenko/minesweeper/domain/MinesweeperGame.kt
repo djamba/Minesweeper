@@ -8,16 +8,12 @@ import java.lang.IllegalStateException
  * Time: 20:24
  */
 
-internal class MinesweeperGame(
-    private val sizeX: Int,
-    private val sizeY: Int,
-    private val mineCount: Int
-) {
+internal class MinesweeperGame {
     private var board: Board? = null
     private var flagUsed: Int = 0
     private var timeLeft: Int = 0
 
-    fun newGame(): Board {
+    fun newGame(sizeX: Int, sizeY: Int, mineCount: Int): Board {
         val board = Board(sizeX, sizeY, mineCount)
         this.board = board
         return board

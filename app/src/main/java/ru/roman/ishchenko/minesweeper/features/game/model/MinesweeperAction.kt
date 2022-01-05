@@ -1,5 +1,7 @@
 package ru.roman.ishchenko.minesweeper.features.game.model
 
+import ru.roman.ishchenko.minesweeper.features.game.settings.MinesweeperSettings
+
 /**
  * User: roman
  * Date: 19.11.2021
@@ -8,7 +10,7 @@ package ru.roman.ishchenko.minesweeper.features.game.model
 
 internal sealed class MinesweeperAction
 
-internal object NewGameAction: MinesweeperAction()
+internal class NewGameAction(val gameSettings: MinesweeperSettings): MinesweeperAction()
 
 internal class OpenCellAction(val x: Int, val y: Int): MinesweeperAction()
 

@@ -7,6 +7,7 @@ import ru.roman.ishchenko.minesweeper.features.game.model.MinesweeperEvent
 import ru.roman.ishchenko.minesweeper.features.game.model.MinesweeperState
 import ru.roman.ishchenko.minesweeper.features.game.model.NewGameAction
 import ru.roman.ishchenko.minesweeper.features.game.model.NewGameEvent
+import ru.roman.ishchenko.minesweeper.features.game.settings.MediumSettings
 import java.lang.IllegalStateException
 import javax.inject.Inject
 
@@ -32,7 +33,7 @@ internal class MinesweeperReducer @Inject constructor(): Reducer<MinesweeperStat
         }
 
     private fun reduce(): Pair<MinesweeperState?, MinesweeperAction?> =
-        StartGameState to NewGameAction
+        StartGameState to NewGameAction(MediumSettings)
 
     private fun reduce(state: MinesweeperState, event: OpenCellEvent): Pair<MinesweeperState?, MinesweeperAction?> =
         when (state) {

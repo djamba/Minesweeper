@@ -23,7 +23,8 @@ internal class GameMiddleware @Inject constructor(
 ): Middleware<MinesweeperEvent, MinesweeperAction> {
 
     suspend fun handleAction(action: NewGameAction): MinesweeperEvent {
-        val board = minesweeperGame.newGame().board
+        val settings = action.gameSettings
+        val board = minesweeperGame.newGame(settings.sizeX, settings.sizeY, settings.mineCount).board
         val boardState = createBoardState(board)
         return ChaneBoardEvent(boardState)
     }

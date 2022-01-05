@@ -20,7 +20,6 @@ internal class GameModule {
     @Singleton
     @Provides
     fun provideHttpService(): MinesweeperGame {
-        // TODO: move game parameters to settings
-        return MinesweeperGame(10, 10, 5)
+        return MinesweeperGame()
     }
 }
