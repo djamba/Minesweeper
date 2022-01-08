@@ -7,7 +7,7 @@ import ru.roman.ishchenko.minesweeper.features.game.model.MinesweeperEvent
 import ru.roman.ishchenko.minesweeper.features.game.model.MinesweeperState
 import ru.roman.ishchenko.minesweeper.features.game.model.NewGameAction
 import ru.roman.ishchenko.minesweeper.features.game.model.NewGameEvent
-import ru.roman.ishchenko.minesweeper.features.game.settings.HardSettings
+import ru.roman.ishchenko.minesweeper.features.game.settings.MediumSettings
 import java.lang.IllegalStateException
 import javax.inject.Inject
 
@@ -33,7 +33,7 @@ internal class MinesweeperReducer @Inject constructor(): Reducer<MinesweeperStat
         }
 
     private fun reduce(): Pair<MinesweeperState?, MinesweeperAction?> =
-        StartGameState to NewGameAction(HardSettings)
+        StartGameState to NewGameAction(MediumSettings)
 
     private fun reduce(state: MinesweeperState, event: OpenCellEvent): Pair<MinesweeperState?, MinesweeperAction?> =
         when (state) {
@@ -51,18 +51,19 @@ internal class MinesweeperReducer @Inject constructor(): Reducer<MinesweeperStat
         when (state) {
             is StartGameState -> GameSate(board = event.board, 0, 0) to SaveGameAction
             is GameSate -> GameSate(board = event.board, state.mineFlagged + event.mineFlagged, state.timeLeft) to SaveGameAction
-            else -> throw IllegalStateException("Wrong state")
+            is WinGameState -> state to null
+            is LoseGameState -> state to null
         }
 
     private fun reduce(state: MinesweeperState, event: WinGameEvent): Pair<MinesweeperState?, MinesweeperAction?> =
         when (state) {
-            is GameSate -> WinGameState(event.minFound, event.timeLeft) to null
+            is GameSate -> WinGameState(event.board, event.minFound, state.timeLeft) to WinGameAction
             else -> throw IllegalStateException("Wrong state")
         }
 
     private fun reduce(state: MinesweeperState, event: LoseGameEvent): Pair<MinesweeperState?, MinesweeperAction?> =
         when (state) {
-            is GameSate -> LoseGameState(event.minFound, event.timeLeft) to null
+            is GameSate -> LoseGameState(event.board, event.minFound, state.timeLeft) to LoseGameAction
             else -> throw IllegalStateException("Wrong state")
         }
 

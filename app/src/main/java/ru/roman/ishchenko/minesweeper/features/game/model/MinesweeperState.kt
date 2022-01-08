@@ -17,11 +17,13 @@ internal data class GameSate(
 ): MinesweeperState()
 
 internal data class WinGameState(
+    val board: List<List<CellSate>>,
     val minFound: Int,
     val timeLeft: Int
 ): MinesweeperState()
 
 internal data class LoseGameState(
+    val board: List<List<CellSate>>,
     val minFound: Int,
     val timeLeft: Int
 ): MinesweeperState()

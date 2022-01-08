@@ -30,9 +30,14 @@ internal class GameMiddleware @Inject constructor(
     }
 
     suspend fun handleAction(action: OpenCellAction): MinesweeperEvent {
-        val board = minesweeperGame.openCell(action.x, action.y).board
-        val boardState = createBoardState(board)
-        return ChaneBoardEvent(boardState)
+        val gameResult = minesweeperGame.openCell(action.x, action.y)
+        val board = gameResult.board.board
+        val boardState = createBoardState(board, gameResult)
+        return when (gameResult) {
+            is MinesweeperGame.GameResult.Continue -> ChaneBoardEvent(boardState)
+            is MinesweeperGame.GameResult.Win -> WinGameEvent(boardState, gameResult.foundMines)
+            is MinesweeperGame.GameResult.Lose -> LoseGameEvent(boardState, gameResult.foundMines)
+        }
     }
 
     suspend fun handleAction(action: FlagCellAction): MinesweeperEvent {
@@ -41,18 +46,23 @@ internal class GameMiddleware @Inject constructor(
         return ChaneBoardEvent(boardState, 1)
     }
 
-    private fun createBoardState(board: Array<Array<Cell>>): List<List<CellSate>> {
+    private fun createBoardState(
+        board: Array<Array<Cell>>,
+        gameResult: MinesweeperGame.GameResult? = null
+    ): List<List<CellSate>> {
         val boardState = mutableListOf<MutableList<CellSate>>()
         for (i in board.indices) {
             boardState.add(mutableListOf())
             for (j in board[i].indices) {
                 val cell = board[i][j]
                 val cellState = when {
-                    cell.state == CellState.OPEN && cell.hasMine -> CellSate.OpenMineBlast
+                    cell.state == CellState.OPEN && cell.hasMine -> CellSate.OpenMineNotFound
                     cell.state == CellState.OPEN && cell.hasMine.not() && cell.nearbyMinesCount == 0 -> CellSate.OpenFree
                     cell.state == CellState.OPEN && cell.hasMine.not() && cell.nearbyMinesCount > 0 -> {
                         CellSate.OpenNumber(cell.nearbyMinesCount)
                     }
+                    cell.state == CellState.FLAG && cell.hasMine && gameResult is
+                            MinesweeperGame.GameResult.Lose -> CellSate.OpenMineFound
                     cell.state == CellState.FLAG -> CellSate.Flag
                     cell.state == CellState.BLAST -> CellSate.OpenMineBlast
                     else -> CellSate.Close

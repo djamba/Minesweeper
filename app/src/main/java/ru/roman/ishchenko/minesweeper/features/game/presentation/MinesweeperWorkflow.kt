@@ -1,7 +1,10 @@
 package ru.roman.ishchenko.minesweeper.features.game.presentation
 
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import ru.roman.ishchenko.minesweeper.features.base.BaseWorkflowViewModel
 import ru.roman.ishchenko.minesweeper.features.game.middleware.GameMiddleware
 import ru.roman.ishchenko.minesweeper.features.game.middleware.StorageMiddleware
@@ -29,13 +32,17 @@ internal class MinesweeperWorkflow @Inject constructor(
     private val storageMiddleware: StorageMiddleware
 ) : BaseWorkflowViewModel<MinesweeperState, MinesweeperEvent, MinesweeperAction>(StartGameState, minesweeperReducer) {
 
+    private var timerJob: Job? = null
+
     override suspend fun handleAction(action: MinesweeperAction) {
         when (action) {
             is NewGameAction -> {
                 val newGameEvent = gameMiddleware.handleAction(action)
                 obtainEvent(newGameEvent)
-                timerMiddleware.handleAction(action).collect { event ->
-                    obtainEvent(event)
+                timerJob = viewModelScope.launch {
+                    timerMiddleware.handleAction(action).collect { event ->
+                        obtainEvent(event)
+                    }
                 }
             }
             is OpenCellAction -> {
@@ -53,6 +60,14 @@ internal class MinesweeperWorkflow @Inject constructor(
             is SaveGameAction -> {
                 val event = storageMiddleware.handleAction(action)
                 obtainEvent(event)
+            }
+            is WinGameAction -> {
+                timerJob?.cancel()
+                obtainAction(action)
+            }
+            is LoseGameAction -> {
+                timerJob?.cancel()
+                obtainAction(action)
             }
         }
     }

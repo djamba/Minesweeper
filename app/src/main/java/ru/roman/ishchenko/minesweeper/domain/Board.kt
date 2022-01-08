@@ -33,20 +33,23 @@ internal class Board(
         }
     }
 
-    fun openCell(x: Int, y: Int) {
-        if (board[x][y].state != CellState.CLOSE) return
+    fun openCell(x: Int, y: Int): Cell {
+        if (board[x][y].state != CellState.CLOSE) {
+            return board[x][y]
+        }
 
         board[x][y].open()
         if (board[x][y].state != CellState.BLAST) {
             openArea(x, y)
         } else {
-            openBoard()
+            openMines()
         }
+
+        return board[x][y]
     }
 
-    fun flagCell(x: Int, y: Int) {
+    fun flagCell(x: Int, y: Int) =
         board[x][y].flag()
-    }
 
     private fun openArea(x: Int, y: Int) {
         if (x > 0 && board[x-1][y].hasMine) board[x][y].nearbyMinesCount++
@@ -68,7 +71,11 @@ internal class Board(
         if (y < board[0].size-1 && board[x][y+1].state == CellState.CLOSE) openArea(x, y+1)
     }
 
-    private fun openBoard() {
-        // TODO: finish game
+    private fun openMines() {
+        for (i in board.indices) {
+            for (j in board[i].indices) {
+                board[i][j].openMine()
+            }
+        }
     }
 }

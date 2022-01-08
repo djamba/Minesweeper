@@ -2,9 +2,7 @@ package ru.roman.ishchenko.minesweeper.features.base
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 /**
@@ -18,11 +16,19 @@ internal abstract class BaseWorkflowViewModel<S, E, A>(
     private val reducer: Reducer<S, E, A>
 ) : ViewModel() {
 
+    private val _action = MutableSharedFlow<A>()
+    val action = _action
+        .shareIn(
+            viewModelScope,
+            SharingStarted.Eagerly,
+            replay = 0
+        )
+
     private val _viewState = MutableStateFlow<S>(initState)
     val viewState = _viewState
         .stateIn(
             viewModelScope,
-            SharingStarted.Eagerly,
+            SharingStarted.WhileSubscribed(5000),
             initState
         )
 
@@ -37,6 +43,12 @@ internal abstract class BaseWorkflowViewModel<S, E, A>(
             viewModelScope.launch {
                 handleAction(action)
             }
+        }
+    }
+
+    fun obtainAction(action: A) {
+        viewModelScope.launch {
+            _action.emit(action)
         }
     }
 

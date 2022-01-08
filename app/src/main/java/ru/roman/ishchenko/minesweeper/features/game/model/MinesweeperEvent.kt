@@ -16,9 +16,9 @@ internal class FlagCellEvent(val x: Int, val y: Int): MinesweeperEvent()
 
 internal class ChaneBoardEvent(val board: List<List<CellSate>>, val mineFlagged: Int = 0): MinesweeperEvent()
 
-internal class WinGameEvent(val minFound: Int, val timeLeft: Int): MinesweeperEvent()
+internal class WinGameEvent(val board: List<List<CellSate>>, val minFound: Int): MinesweeperEvent()
 
-internal class LoseGameEvent(val minFound: Int, val timeLeft: Int): MinesweeperEvent()
+internal class LoseGameEvent(val board: List<List<CellSate>>, val minFound: Int): MinesweeperEvent()
 
 internal class TimerEvent(val timeLeft: Int): MinesweeperEvent()
 

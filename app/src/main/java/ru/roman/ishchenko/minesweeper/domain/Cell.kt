@@ -25,7 +25,18 @@ internal class Cell {
         }
     }
 
-    fun flag() {
-        state = CellState.FLAG
+    fun openMine() {
+        if (hasMine && state == CellState.CLOSE) {
+            state = CellState.OPEN
+        }
+    }
+
+    fun flag(): Boolean {
+        state = if (state == CellState.CLOSE) {
+            CellState.FLAG
+        } else {
+            CellState.CLOSE
+        }
+        return hasMine
     }
 }
