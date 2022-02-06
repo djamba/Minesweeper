@@ -16,6 +16,8 @@ internal class OpenCellAction(val x: Int, val y: Int): MinesweeperAction()
 
 internal class FlagCellAction(val x: Int, val y: Int): MinesweeperAction()
 
+internal object ErrorGameAction: MinesweeperAction()
+
 internal object LoadGameAction: MinesweeperAction()
 
 internal object SaveGameAction: MinesweeperAction()

@@ -8,7 +8,6 @@ import ru.roman.ishchenko.minesweeper.features.game.model.MinesweeperState
 import ru.roman.ishchenko.minesweeper.features.game.model.NewGameAction
 import ru.roman.ishchenko.minesweeper.features.game.model.NewGameEvent
 import ru.roman.ishchenko.minesweeper.features.game.settings.MediumSettings
-import java.lang.IllegalStateException
 import javax.inject.Inject
 
 /**
@@ -16,6 +15,8 @@ import javax.inject.Inject
  * Date: 19.11.2021
  * Time: 22:25
  */
+
+private val INVALID_EVENT_FOR_THIS_STATE = Pair<MinesweeperState?, MinesweeperAction?>(null, ErrorGameAction)
 
 internal class MinesweeperReducer @Inject constructor(): Reducer<MinesweeperState, MinesweeperEvent, MinesweeperAction> {
 
@@ -27,6 +28,7 @@ internal class MinesweeperReducer @Inject constructor(): Reducer<MinesweeperStat
             is ChaneBoardEvent -> reduce(state, event)
             is WinGameEvent -> reduce(state, event)
             is LoseGameEvent -> reduce(state, event)
+            is ErrorGameEvent -> reduce(state, event)
             is TimerEvent -> reduce(state, event)
             is SuccessSaveGameEvent -> reduce(state, event)
             is ErrorSaveGameEvent -> reduce(state, event)
@@ -38,13 +40,13 @@ internal class MinesweeperReducer @Inject constructor(): Reducer<MinesweeperStat
     private fun reduce(state: MinesweeperState, event: OpenCellEvent): Pair<MinesweeperState?, MinesweeperAction?> =
         when (state) {
             is GameSate -> null to OpenCellAction(event.x, event.y)
-            else -> throw IllegalStateException("Wrong state")
+            else -> INVALID_EVENT_FOR_THIS_STATE
         }
 
     private fun reduce(state: MinesweeperState, event: FlagCellEvent): Pair<MinesweeperState?, MinesweeperAction?> =
         when (state) {
             is GameSate -> null to FlagCellAction(event.x, event.y)
-            else -> throw IllegalStateException("Wrong state")
+            else -> INVALID_EVENT_FOR_THIS_STATE
         }
 
     private fun reduce(state: MinesweeperState, event: ChaneBoardEvent): Pair<MinesweeperState?, MinesweeperAction?> =
@@ -58,30 +60,36 @@ internal class MinesweeperReducer @Inject constructor(): Reducer<MinesweeperStat
     private fun reduce(state: MinesweeperState, event: WinGameEvent): Pair<MinesweeperState?, MinesweeperAction?> =
         when (state) {
             is GameSate -> WinGameState(event.board, event.minFound, state.timeLeft) to WinGameAction
-            else -> throw IllegalStateException("Wrong state")
+            else -> INVALID_EVENT_FOR_THIS_STATE
         }
 
     private fun reduce(state: MinesweeperState, event: LoseGameEvent): Pair<MinesweeperState?, MinesweeperAction?> =
         when (state) {
             is GameSate -> LoseGameState(event.board, event.minFound, state.timeLeft) to LoseGameAction
-            else -> throw IllegalStateException("Wrong state")
+            else -> INVALID_EVENT_FOR_THIS_STATE
+        }
+
+    private fun reduce(state: MinesweeperState, event: ErrorGameEvent): Pair<MinesweeperState?, MinesweeperAction?> =
+        when (state) {
+            is GameSate -> state to ErrorGameAction
+            else -> INVALID_EVENT_FOR_THIS_STATE
         }
 
     private fun reduce(state: MinesweeperState, event: TimerEvent): Pair<MinesweeperState?, MinesweeperAction?> =
         when (state) {
             is GameSate -> state.copy(timeLeft = event.timeLeft) to SaveGameAction
-            else -> throw IllegalStateException("Wrong state")
+            else -> INVALID_EVENT_FOR_THIS_STATE
         }
 
     private fun reduce(state: MinesweeperState, event: SuccessSaveGameEvent): Pair<MinesweeperState?, MinesweeperAction?> =
         when (state) {
             is GameSate -> state to null
-            else -> throw IllegalStateException("Wrong state")
+            else -> INVALID_EVENT_FOR_THIS_STATE
         }
 
     private fun reduce(state: MinesweeperState, event: ErrorSaveGameEvent): Pair<MinesweeperState?, MinesweeperAction?> =
         when (state) {
             is GameSate -> state to null
-            else -> throw IllegalStateException("Wrong state")
+            else -> INVALID_EVENT_FOR_THIS_STATE
         }
 }

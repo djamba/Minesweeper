@@ -55,6 +55,7 @@ class HostActivity : ComponentActivity() {
                     val text = when (action) {
                         is WinGameAction -> "Win game!"
                         is LoseGameAction -> "Lose game :("
+                        is ErrorGameAction -> "Error!"
                         else -> ""
                     }
                     Toast.makeText(this@HostActivity, text, Toast.LENGTH_LONG).show()

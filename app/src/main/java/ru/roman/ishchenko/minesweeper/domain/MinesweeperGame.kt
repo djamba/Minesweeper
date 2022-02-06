@@ -1,7 +1,5 @@
 package ru.roman.ishchenko.minesweeper.domain
 
-import java.lang.IllegalStateException
-
 /**
  * User: roman
  * Date: 04.01.2022
@@ -11,7 +9,6 @@ import java.lang.IllegalStateException
 internal class MinesweeperGame {
     private var board: Board? = null
     private var flagUsed: Int = 0
-    private var timeLeft: Int = 0
     private var laidMines: Int = 0
     private var foundMines: Int = 0
     private var gameStarted: Boolean = false
@@ -26,7 +23,7 @@ internal class MinesweeperGame {
 
     fun openCell(x: Int, y: Int): GameResult {
         val currentBoard = board
-        if (gameStarted && currentBoard != null) {
+        return if (gameStarted && currentBoard != null) {
             val cell = currentBoard.openCell(x, y)
             if (cell.state == CellState.BLAST) {
                 gameStarted = false
@@ -36,9 +33,9 @@ internal class MinesweeperGame {
                 gameStarted = false
                 return GameResult.Win(currentBoard, foundMines)
             }
-            return GameResult.Continue(currentBoard)
+            GameResult.Continue(currentBoard)
         } else {
-            throw IllegalStateException("Game not started")
+            GameResult.ErrorGameNotStarted
         }
     }
 
@@ -56,9 +53,9 @@ internal class MinesweeperGame {
         return true
     }
 
-    fun flagCell(x: Int, y: Int): Board {
+    fun flagCell(x: Int, y: Int): GameResult {
         val currentBoard = board
-        if (currentBoard != null) {
+        return if (currentBoard != null) {
             if (currentBoard.board[x][y].state == CellState.CLOSE) {
                 val hasMine = currentBoard.flagCell(x, y)
                 if (hasMine) foundMines++
@@ -68,19 +65,16 @@ internal class MinesweeperGame {
                 if (hasMine) foundMines--
                 flagUsed--
             }
-            return currentBoard
+            GameResult.Continue(currentBoard)
         } else {
-            throw IllegalStateException("Game not started")
+            GameResult.ErrorGameNotStarted
         }
     }
 
-    fun setTimeLeft(timeLeft: Int) {
-        this.timeLeft = timeLeft
-    }
-
-    sealed class GameResult(open val board: Board) {
-        class Continue(override val board: Board): GameResult(board)
-        class Win(override val board: Board, val foundMines: Int): GameResult(board)
-        class Lose(override val board: Board, val foundMines: Int): GameResult(board)
+    sealed class GameResult {
+        class Continue(val board: Board): GameResult()
+        class Win(val board: Board, val foundMines: Int): GameResult()
+        class Lose(val board: Board, val foundMines: Int): GameResult()
+        object ErrorGameNotStarted: GameResult()
     }
 }

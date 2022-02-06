@@ -20,6 +20,8 @@ internal class WinGameEvent(val board: List<List<CellSate>>, val minFound: Int):
 
 internal class LoseGameEvent(val board: List<List<CellSate>>, val minFound: Int): MinesweeperEvent()
 
+internal object ErrorGameEvent: MinesweeperEvent()
+
 internal class TimerEvent(val timeLeft: Int): MinesweeperEvent()
 
 internal object SuccessSaveGameEvent: MinesweeperEvent()

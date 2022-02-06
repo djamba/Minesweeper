@@ -69,6 +69,10 @@ internal class MinesweeperWorkflow @Inject constructor(
                 timerJob?.cancel()
                 obtainAction(action)
             }
+            is ErrorGameAction -> {
+                timerJob?.cancel()
+                obtainAction(action)
+            }
         }
     }
 }
