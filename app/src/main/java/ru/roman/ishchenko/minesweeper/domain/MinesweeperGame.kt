@@ -44,7 +44,7 @@ internal class MinesweeperGame {
         for (i in board.indices) {
             for (j in board[i].indices) {
                 if (board[i][j].state == CellState.BLAST ||
-                    board[i][j].state == CellState.CLOSE
+                    (board[i][j].hasMine.not() && board[i][j].state == CellState.CLOSE)
                 ) {
                     return false
                 }
@@ -55,7 +55,7 @@ internal class MinesweeperGame {
 
     fun flagCell(x: Int, y: Int): GameResult {
         val currentBoard = board
-        return if (currentBoard != null) {
+        return if (gameStarted && currentBoard != null) {
             if (currentBoard.board[x][y].state == CellState.CLOSE) {
                 val hasMine = currentBoard.flagCell(x, y)
                 if (hasMine) foundMines++
